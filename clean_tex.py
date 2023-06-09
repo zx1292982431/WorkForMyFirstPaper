@@ -7,6 +7,16 @@ def calculate_chinese_ratio(sentence):
     chinese_ratio = chinese_count / total_characters
     return chinese_ratio
 
+def replace_latex_syntax(text):
+    # 定义要替换的正则表达式模式
+    pattern = r'\$([^$]+)\$'
+
+    # 使用re.sub()函数进行替换
+    replaced_text = re.sub(pattern, 'TEX', text)
+
+    return replaced_text
+
+
 tex_files = [
     './tex/1/2023_06_01_36125522c510d15202afg.tex',
     './tex/2/2023_06_01_03cd5562f91812db75eag.tex',
@@ -82,7 +92,7 @@ tex_files = [
 # ]
 
 for tex_file in tex_files:
-    with open(tex_file) as file:
+    with open(tex_file,encoding='utf-8') as file:
         for line in file:
             line = line.replace('\\begin{CJK}{UTF8}{mj}','')
             line = line.replace('\\end{CJK}','')
@@ -90,7 +100,8 @@ for tex_file in tex_files:
             line = line.replace('\\section','')
             line = line.replace('\\title','')
             line = line.replace(' ','')
+            line = replace_latex_syntax(line)
             line.strip()
             if calculate_chinese_ratio(line)>=0.3:
-                with open('data/cleaned_tex_all.tex', 'a') as ans:
+                with open('data/cleaned_tex.tex', 'a',encoding='utf-8') as ans:
                     ans.write(line)
